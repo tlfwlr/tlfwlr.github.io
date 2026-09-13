@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>◈ RETRO LOG MAKER ◈</title>
+
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+@import url('https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css');
+@import url('//cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@1.601/neodgm/style.css');
+</style>
+
+<style>
+:root{
+  --ui-navy1:#0a0d14;
+  --ui-panel:#12161f;
+  --ui-line:#232a38;
+  --ui-line-lt:#3d4b60;
+  --ui-text:#c7d0dd;
+  --ui-text-dim:#727f93;
+  --ui-accent:#7aa2f7;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  min-height:100vh;
+  background:var(--ui-navy1);
+  color:var(--ui-text);
+  font-family:'Pretendard', sans-serif;
+  padding:28px 20px 60px;
+}
+
+.app-header{
+  max-width:1336px;margin:0 auto 22px;display:flex;align-items:baseline;gap:14px;
+  border-bottom:1px solid var(--ui-line);padding-bottom:16px;
+}
+.app-header .glyph{font-family:'NeoDunggeunmo', monospace;font-size:22px;color:var(--ui-accent);}
+.app-header h1{font-family:'NeoDunggeunmo', monospace;font-size:15px;font-weight:400;letter-spacing:1px;margin:0;color:#eef2f8;}
+.app-header p{margin:0;font-size:12.5px;color:var(--ui-text-dim);}
+
+.app{max-width:1336px;margin:0 auto;display:grid;grid-template-columns:340px 1fr;gap:22px;align-items:start;}
+@media (max-width:880px){.app{grid-template-columns:1fr;}}
+
+.panel{background:var(--ui-panel);border:1px solid var(--ui-line);padding:18px;}
+.section{margin-bottom:20px;}
+.section:last-child{margin-bottom:0;}
+.section-title{font-family:'NeoDunggeunmo', monospace;font-size:13px;color:var(--ui-accent);margin:0 0 10px;display:flex;align-items:center;gap:6px;}
+.section-title::before{content:"▌";color:var(--ui-accent);}
+
+.btn-row{display:flex;gap:6px;flex-wrap:wrap;}
+.chip{flex:1;min-width:60px;background:#171c27;border:1px solid var(--ui-line);color:var(--ui-text-dim);
+  font-family:'Pretendard',sans-serif;font-size:12.5px;padding:8px 6px;cursor:pointer;text-align:center;}
+.chip:hover{border-color:var(--ui-line-lt);color:var(--ui-text);}
+.chip.active{background:#20293b;border-color:var(--ui-accent);color:#eef2f8;}
+
+.theme-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.theme-chip{display:flex;align-items:center;gap:8px;background:#171c27;border:1px solid var(--ui-line);
+  padding:7px 8px;cursor:pointer;font-size:12px;color:var(--ui-text-dim);}
+.theme-chip:hover{border-color:var(--ui-line-lt);}
+.theme-chip.active{border-color:var(--ui-accent);color:#eef2f8;background:#20293b;}
+.swatch{width:14px;height:14px;border-radius:50%;flex-shrink:0;border:1px solid rgba(255,255,255,.25);}
+
+select, input[type="text"], textarea{width:100%;background:#171c27;border:1px solid var(--ui-line);color:var(--ui-text);
+  font-family:'Pretendard',sans-serif;font-size:13px;padding:8px 9px;outline:none;}
+select:focus, input[type="text"]:focus, textarea:focus{border-color:var(--ui-accent);}
+textarea{resize:vertical;min-height:48px;line-height:1.45;}
+label.small{font-size:11.5px;color:var(--ui-text-dim);display:block;margin:10px 0 5px;}
+
+input[type="range"]{width:100%;accent-color:var(--ui-accent);}
+.range-val{font-size:11.5px;color:var(--ui-text-dim);text-align:right;}
+
+.msg-editor{border:1px solid var(--ui-line);padding:10px;margin-bottom:10px;background:#171c27;}
+.msg-editor .tag{font-size:10.5px;color:var(--ui-text-dim);display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.msg-editor .tag button{background:none;border:none;color:#7b8aa0;cursor:pointer;font-size:12px;padding:0 2px;}
+.msg-editor .tag button:hover{color:#ff9494;}
+.msg-editor textarea{margin-bottom:8px;font-size:12.5px;}
+
+.mini-toggles{display:flex;gap:6px;margin-bottom:8px;}
+.mini-toggle{flex:0 0 auto;width:30px;text-align:center;padding:5px 0;font-size:12px;
+  border:1px solid var(--ui-line);background:#0e1219;color:var(--ui-text-dim);cursor:pointer;}
+.mini-toggle.b{font-weight:700;}
+.mini-toggle.i{font-style:italic;}
+.mini-toggle.active{background:#20293b;border-color:var(--ui-accent);color:#eef2f8;}
+.mini-toggle.wide{flex:1;width:auto;font-style:normal;font-weight:400;font-family:'Pretendard',sans-serif;font-size:11.5px;}
+.format-hint{font-size:10px;color:#4d5771;margin:-2px 0 8px;line-height:1.5;}
+.side-row{display:flex;gap:6px;margin-bottom:8px;}
+
+.avatar-row{display:flex;align-items:center;gap:8px;margin-bottom:2px;}
+.avatar-row label.file-btn{
+  flex:1;text-align:center;padding:6px 0;font-size:11.5px;color:var(--ui-text-dim);
+  border:1px dashed var(--ui-line-lt);cursor:pointer;background:#0e1219;
+}
+.avatar-row label.file-btn:hover{color:#eef2f8;border-color:var(--ui-accent);}
+.avatar-row input[type=file]{display:none;}
+.avatar-preview{width:28px;height:28px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--ui-line-lt);}
+.avatar-row .rm-avatar{background:none;border:none;color:#7b8aa0;cursor:pointer;font-size:12px;}
+
+.add-btn{width:100%;padding:9px 0;background:none;border:1px dashed var(--ui-line-lt);
+  color:var(--ui-text-dim);cursor:pointer;font-size:12.5px;font-family:'Pretendard',sans-serif;}
+.add-btn:hover{color:#eef2f8;border-color:var(--ui-accent);}
+
+.hint{font-size:10.5px;color:#4d5771;margin-top:8px;line-height:1.5;}
+
+.download-btn{width:100%;padding:13px 0;margin-top:4px;background:linear-gradient(180deg,#7aa2f7,#4a75d4);
+  border:1px solid #5c88e8;color:#fff;font-family:'Pretendard',sans-serif;font-weight:600;font-size:14px;cursor:pointer;}
+.download-btn:hover{filter:brightness(1.1);}
+.download-btn:disabled{opacity:.6;cursor:default;}
+
+.preview-wrap{background:var(--ui-panel);border:1px solid var(--ui-line);min-height:520px;
+  display:flex;padding:26px;overflow:auto;}
+
+#exportRoot{position:relative;flex-shrink:0;background:var(--desktop-bg);display:flex;flex-direction:column;
+  font-family:'Pretendard',sans-serif;height:auto;margin:auto;}
+
+.desktop-area{flex:1;position:relative;display:flex;align-items:center;justify-content:center;padding:4.5%;min-height:0;}
+
+.notepad-window{width:100%;height:100%;display:flex;flex-direction:column;background:var(--chrome-face);
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.7), inset -1px -1px 0 rgba(0,0,0,.12), 0 14px 34px rgba(0,0,0,.18);}
+
+.win-titlebar{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:6px 8px;
+  background:var(--chrome-title);font-family:'NeoDunggeunmo',monospace;color:var(--chrome-title-text);
+  font-size:clamp(10px,1.7vw,14px);}
+.win-titlebar .icon{width:14px;height:14px;flex-shrink:0;}
+.win-titlebar .ttext{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.ctrl{width:14px;height:13px;background:var(--ctrl-bg,#ffffff);border:1px solid var(--ctrl-border,transparent);
+  display:flex;align-items:center;justify-content:center;box-sizing:border-box;
+  font-size:9px;color:var(--ctrl-text,#444444);margin-left:3px;flex-shrink:0;font-family:'Pretendard',sans-serif;}
+
+.win-menubar{flex:0 0 auto;background:var(--chrome-face);border-bottom:1px solid rgba(0,0,0,.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6);padding:4px 10px;display:flex;gap:14px;
+  font-family:'NeoDunggeunmo',monospace;font-size:clamp(9px,1.35vw,12px);color:var(--menu-text);}
+
+.log-body{flex:1;position:relative;overflow:hidden;background:var(--body-bg);padding:4% 5%;
+  display:flex;flex-direction:column;min-height:0;}
+.log-status{font-family:'NeoDunggeunmo',monospace;font-size:clamp(9px,1.3vw,12px);color:var(--status-text);
+  flex:0 0 auto;z-index:1;}
+.log-status .cursor{display:inline-block;width:.55em;height:1em;background:var(--status-text);
+  vertical-align:-2px;margin-left:2px;animation:blink 1.1s steps(1) infinite;}
+@keyframes blink{50%{opacity:0;}}
+.log-status.top{margin-bottom:var(--log-gap,18px);}
+.log-status.bottom{margin-top:var(--log-gap,18px);}
+
+.messages-container{flex:1;display:flex;flex-direction:column;justify-content:center;gap:22px;
+  z-index:1;min-height:0;}
+.msg-row{display:flex;align-items:flex-end;gap:8px;}
+.msg-row.left{justify-content:flex-start;}
+.msg-row.right{justify-content:flex-end;}
+
+.avatar{width:var(--avatar-size,40px);height:var(--avatar-size,40px);aspect-ratio:1/1;object-fit:cover;
+  border-radius:var(--avatar-radius,0px);
+  flex-shrink:0;border:var(--avatar-border-width,2px) solid var(--avatar-border,var(--chrome-face));
+  box-shadow:0 2px 6px rgba(0,0,0,.18), var(--avatar-glow,0 0 0 rgba(0,0,0,0));}
+
+.msg-window{max-width:70%;display:flex;flex-direction:column;box-shadow:0 4px 12px rgba(0,0,0,.12);}
+.msg-row.left .msg-window{background:var(--bubble-other-bg);border:1px solid var(--bubble-other-border);}
+.msg-row.right .msg-window{background:var(--bubble-me-bg);}
+
+.msg-titlebar{display:flex;align-items:center;justify-content:flex-end;gap:3px;padding:4px 6px;}
+.msg-row.left .msg-titlebar{background:var(--bubble-other-title);border-bottom:1px solid var(--bubble-other-border);}
+.msg-row.right .msg-titlebar{background:var(--bubble-me-title);}
+.msg-titlebar .ctrl{width:11px;height:10px;font-size:7.5px;}
+#exportRoot.no-bubble-chrome .msg-titlebar{display:none;}
+
+
+.msg-body{padding:9px 12px;word-break:break-word;white-space:pre-wrap;line-height:1.6;}
+.msg-row.left .msg-body{color:var(--bubble-other-text);}
+.msg-row.right .msg-body{color:var(--bubble-me-text);}
+
+.win-statusbar{flex:0 0 auto;background:var(--chrome-face);border-top:1px solid rgba(0,0,0,.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6);padding:4px 10px;display:flex;justify-content:space-between;
+  font-family:'NeoDunggeunmo',monospace;font-size:clamp(8.5px,1.2vw,11px);color:var(--menu-text);}
+
+.taskbar{flex:0 0 auto;height:6.8%;min-height:26px;background:var(--taskbar-bg);
+  display:flex;align-items:center;padding:0 1.4%;gap:10px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4);position:relative;z-index:3;}
+.start-btn{display:flex;align-items:center;gap:5px;padding:3px 12px;border-radius:2px;
+  background:linear-gradient(180deg,var(--chrome-title),var(--start-deep));
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.4);
+  font-family:'NeoDunggeunmo',monospace;font-weight:700;color:#fff;font-size:clamp(9px,1.3vw,12px);}
+.taskbar .divider{flex:1;}
+.tray{display:flex;align-items:center;gap:9px;margin-right:2px;color:var(--menu-text);opacity:.8;}
+.tray-icon{width:11px;height:11px;flex-shrink:0;}
+.tray-icon rect{fill:currentColor;}
+.taskbar-clock{color:var(--menu-text);padding:0 2px;
+  font-family:'NeoDunggeunmo',monospace;font-size:clamp(9px,1.25vw,12px);}
+
+/* ---- 드림핑크 테마 전용 효과 ---- */
+#exportRoot.theme-glitch{overflow:hidden;}
+#exportRoot.theme-glitch .win-titlebar,
+#exportRoot.theme-glitch .msg-titlebar{position:relative;overflow:hidden;}
+#exportRoot.theme-glitch .win-titlebar::after,
+#exportRoot.theme-glitch .msg-titlebar::after{
+  display:none;
+}
+#exportRoot.theme-glitch .win-titlebar .ttext{
+  text-shadow:-1.5px 0 rgba(255,63,168,.8), 1.5px 0 rgba(125,216,255,.8);
+}
+#exportRoot.theme-glitch .win-titlebar::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg, rgba(255,143,208,.35), rgba(159,227,255,.35));
+  mix-blend-mode:screen;opacity:0;
+  animation:glitchFlash 4.5s infinite steps(1);
+}
+#exportRoot.theme-glitch .log-status.top{
+  text-shadow:-1px 0 rgba(255,63,168,.7), 1px 0 rgba(125,216,255,.7);
+}
+#exportRoot.theme-glitch .msg-row.right .msg-window{
+  animation:glitchJitter 6s infinite steps(1);
+}
+@keyframes glitchFlash{
+  0%,94%,100%{opacity:0;transform:translateX(0);}
+  95%{opacity:.9;transform:translateX(2px);}
+  96%{opacity:.6;transform:translateX(-3px);}
+  97%{opacity:0;transform:translateX(1px);}
+}
+@keyframes glitchJitter{
+  0%,96%,100%{transform:translate(0,0);}
+  97%{transform:translate(1.5px,0);}
+  98%{transform:translate(-2px,0);}
+  99%{transform:translate(1px,0);}
+}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <span class="glyph">◈</span>
+  <div>
+    <h1>RETRO LOG MAKER</h1>
+    <p>PC통신 감성의 채팅 로그 백업 이미지를 만들어보세요</p>
+  </div>
+</div>
+
+<div class="app">
+  <div class="panel">
+
+    <div class="section">
+      <p class="section-title">화면 비율</p>
+      <div class="btn-row" id="ratioRow"></div>
+            <label class="small">파일명</label>
+      <input type="text" id="filenameInput" value="PC통신_채팅로그_백업">
+      <label class="small">대화창 이름</label>
+      <input type="text" id="windowLabelInput" placeholder="예: PC통신 대화창, 페어명">
+    </div>
+
+    <div class="section">
+      <p class="section-title">컬러 테마</p>
+      <div class="theme-grid" id="themeGrid"></div>
+    </div>
+
+    <div class="section">
+      <p class="section-title">글꼴</p>
+      <select id="fontSelect"></select>
+      <label class="small">글자 크기</label>
+      <input type="range" id="fontSizeRange" min="12" max="26" value="16">
+      <div class="range-val" id="fontSizeVal">16px</div>
+      <p class="hint">* 시스템 폰트는 해당 폰트가 설치된 컴퓨터에서만 정상적으로 보여요.</p>
+    </div>
+
+    <div class="section">
+      <p class="section-title">프로필 이미지 크기</p>
+      <input type="range" id="avatarSizeRange" min="20" max="72" value="40">
+      <div class="range-val" id="avatarSizeVal">40px</div>
+    </div>
+
+    <div class="section">
+      <p class="section-title">대화 내용</p>
+      <p class="format-hint">* 텍스트를 선택한 뒤 B / I 버튼을 누르거나 **굵게**, *기울임*으로 꾸밀 수 있어요.</p>
+      <label class="small">말풍선 간격</label>
+      <input type="range" id="bubbleGapRange" min="4" max="60" value="22">
+      <div class="range-val" id="bubbleGapVal">22px</div>
+      <label class="small">로그 문구 간격 (위·아래 동시)</label>
+      <input type="range" id="logGapRange" min="0" max="60" value="18">
+      <div class="range-val" id="logGapVal">18px</div>
+      <label class="small">말풍선 표시 (미니 창 모양 여부)</label>
+      <div class="btn-row" id="bubbleChromeRow"></div>
+      <div id="msgEditors"></div>
+      <button class="add-btn" id="addMsgBtn">+ 말풍선 추가</button>
+    </div>
+
+    <div class="section">
+      <p class="section-title">시간</p>
+      <input type="text" id="clockInput" value="오후 2:35" placeholder="오전 10:00, 10:00 AM">
+      <label class="small">작업표시줄</label>
+      <div class="btn-row" id="taskbarRow"></div>
+    </div>
+
+    <div class="section">
+      <p class="section-title">저장</p>
+      <button class="download-btn" id="downloadBtn">PNG로 다운로드</button>
+    </div>
+
+  </div>
+
+  <div class="preview-wrap" id="previewWrap">
+    <div id="exportRoot">
+      <div class="desktop-area">
+        <div class="notepad-window">
+          <div class="win-titlebar">
+            <svg class="icon" viewBox="0 0 8 8" shape-rendering="crispEdges">
+              <rect x="0" y="1" width="6" height="4" fill="#ffffff" opacity=".95"/>
+              <rect x="1" y="5" width="2" height="1" fill="#ffffff" opacity=".95"/>
+              <rect x="1" y="2" width="4" height="1" fill="var(--chrome-title)"/>
+              <rect x="1" y="3" width="3" height="1" fill="var(--chrome-title)"/>
+            </svg>
+            <span class="ttext" id="titleText">PC통신_채팅로그_백업.log - PC통신 대화창</span>
+            <span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl">×</span>
+          </div>
+          <div class="win-menubar">
+            <span>접속(C)</span><span>대화(T)</span><span>설정(O)</span><span>보기(V)</span><span>도움말(H)</span>
+          </div>
+          <div class="log-body">
+            <div class="log-status top">◆ [SYSTEM] 통신 접속 완료 · 반갑습니다<span class="cursor"></span></div>
+            <div class="messages-container" id="messagesContainer"></div>
+            <div class="log-status bottom" id="logCount">▌ 0건의 대화가 저장되었습니다</div>
+          </div>
+          <div class="win-statusbar">
+            <span>UTF-8　접속중</span>
+            <span id="lineStatus">줄 1, 열 1　100%</span>
+          </div>
+        </div>
+      </div>
+      <div class="taskbar" id="taskbarEl">
+        <div class="start-btn"><span>시작</span></div>
+        <div class="divider"></div>
+        <div class="tray">
+          <svg class="tray-icon" viewBox="0 0 8 8" shape-rendering="crispEdges">
+            <rect x="2" y="1" width="1" height="1"/><rect x="1" y="2" width="1" height="1"/><rect x="2" y="2" width="1" height="1"/><rect x="5" y="2" width="1" height="1"/>
+            <rect x="0" y="3" width="1" height="1"/><rect x="1" y="3" width="1" height="1"/><rect x="2" y="3" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="6" y="3" width="1" height="1"/>
+            <rect x="0" y="4" width="1" height="1"/><rect x="1" y="4" width="1" height="1"/><rect x="2" y="4" width="1" height="1"/><rect x="3" y="4" width="1" height="1"/>
+            <rect x="0" y="5" width="1" height="1"/><rect x="1" y="5" width="1" height="1"/><rect x="2" y="5" width="1" height="1"/><rect x="3" y="5" width="1" height="1"/><rect x="6" y="5" width="1" height="1"/>
+            <rect x="1" y="6" width="1" height="1"/><rect x="2" y="6" width="1" height="1"/><rect x="5" y="6" width="1" height="1"/>
+            <rect x="2" y="7" width="1" height="1"/>
+          </svg>
+          <svg class="tray-icon" viewBox="0 0 8 8" shape-rendering="crispEdges">
+            <rect x="6" y="0" width="1" height="1"/><rect x="6" y="1" width="1" height="1"/>
+            <rect x="4" y="2" width="1" height="1"/><rect x="6" y="2" width="1" height="1"/>
+            <rect x="4" y="3" width="1" height="1"/><rect x="6" y="3" width="1" height="1"/>
+            <rect x="2" y="4" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/><rect x="6" y="4" width="1" height="1"/>
+            <rect x="2" y="5" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="6" y="5" width="1" height="1"/>
+            <rect x="0" y="6" width="1" height="1"/><rect x="2" y="6" width="1" height="1"/><rect x="4" y="6" width="1" height="1"/><rect x="6" y="6" width="1" height="1"/>
+            <rect x="0" y="7" width="1" height="1"/><rect x="2" y="7" width="1" height="1"/><rect x="4" y="7" width="1" height="1"/><rect x="6" y="7" width="1" height="1"/>
+          </svg>
+          <svg class="tray-icon" viewBox="0 0 8 8" shape-rendering="crispEdges">
+            <rect x="1" y="0" width="1" height="1"/><rect x="2" y="0" width="1" height="1"/><rect x="3" y="0" width="1" height="1"/><rect x="4" y="0" width="1" height="1"/><rect x="5" y="0" width="1" height="1"/><rect x="6" y="0" width="1" height="1"/>
+            <rect x="0" y="1" width="1" height="1"/><rect x="7" y="1" width="1" height="1"/>
+            <rect x="0" y="2" width="1" height="1"/><rect x="2" y="2" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="5" y="2" width="1" height="1"/><rect x="7" y="2" width="1" height="1"/>
+            <rect x="0" y="3" width="1" height="1"/><rect x="2" y="3" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="4" y="3" width="1" height="1"/><rect x="5" y="3" width="1" height="1"/><rect x="7" y="3" width="1" height="1"/>
+            <rect x="0" y="4" width="1" height="1"/><rect x="7" y="4" width="1" height="1"/>
+            <rect x="0" y="5" width="1" height="1"/><rect x="2" y="5" width="1" height="1"/><rect x="3" y="5" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="5" y="5" width="1" height="1"/><rect x="6" y="5" width="1" height="1"/>
+            <rect x="0" y="6" width="1" height="1"/><rect x="7" y="6" width="1" height="1"/>
+            <rect x="0" y="7" width="1" height="1"/><rect x="1" y="7" width="1" height="1"/><rect x="2" y="7" width="1" height="1"/><rect x="3" y="7" width="1" height="1"/><rect x="4" y="7" width="1" height="1"/><rect x="5" y="7" width="1" height="1"/><rect x="6" y="7" width="1" height="1"/><rect x="7" y="7" width="1" height="1"/>
+          </svg>
+        </div>
+        <div class="taskbar-clock" id="taskbarClock"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+const RATIOS = {
+  '1:1': {w:900, h:900, label:'1:1'},
+  '4:5': {w:900, h:1125, label:'4:5'},
+  '9:16':{w:720, h:1280, label:'9:16'},
+};
+
+const THEMES = {
+  blue:{name:'블루 × 화이트', swatch:'#5b8def', program:'PC통신', vars:{
+    '--desktop-bg':'#e9f0ff','--chrome-face':'#ffffff','--chrome-title':'#5b8def','--chrome-title-text':'#ffffff',
+    '--menu-text':'#4a5977','--body-bg':'#f3f7ff','--status-text':'#5b6b8f',
+    '--bubble-me-bg':'#5b8def','--bubble-me-title':'#3762c4','--bubble-me-text':'#ffffff',
+    '--bubble-other-bg':'#ffffff','--bubble-other-border':'#5b8def','--bubble-other-title':'#eef3ff','--bubble-other-text':'#33404d',
+    '--taskbar-bg':'#d7e3fb','--start-deep':'#3762c4',
+    '--ctrl-bg':'#ffffff','--ctrl-text':'#5b8def','--ctrl-border':'transparent',
+    '--avatar-border':'#ffffff','--avatar-glow':'0 0 0 3px #5b8def40','--avatar-radius':'0px','--avatar-border-width':'1px',
+  }},
+  pink:{name:'핑크 × 화이트', swatch:'#ef8db0', program:'PC통신', vars:{
+    '--desktop-bg':'#fdeef4','--chrome-face':'#ffffff','--chrome-title':'#ef8db0','--chrome-title-text':'#ffffff',
+    '--menu-text':'#8a5468','--body-bg':'#fff6f9','--status-text':'#c06c8d',
+    '--bubble-me-bg':'#ef8db0','--bubble-me-title':'#c85f88','--bubble-me-text':'#ffffff',
+    '--bubble-other-bg':'#ffffff','--bubble-other-border':'#ef8db0','--bubble-other-title':'#fdedf2','--bubble-other-text':'#4a3540',
+    '--taskbar-bg':'#f8d7e4','--start-deep':'#c85f88',
+    '--ctrl-bg':'#ffffff','--ctrl-text':'#ef8db0','--ctrl-border':'transparent',
+    '--avatar-border':'#ffffff','--avatar-glow':'0 0 0 3px #ef8db040','--avatar-radius':'0px','--avatar-border-width':'1px',
+  }},
+  lavender:{name:'라벤더 × 화이트', swatch:'#a487d9', program:'PC통신', vars:{
+    '--desktop-bg':'#f3edfc','--chrome-face':'#ffffff','--chrome-title':'#a487d9','--chrome-title-text':'#ffffff',
+    '--menu-text':'#67557f','--body-bg':'#f9f6fd','--status-text':'#8570a8',
+    '--bubble-me-bg':'#a487d9','--bubble-me-title':'#7455ad','--bubble-me-text':'#ffffff',
+    '--bubble-other-bg':'#ffffff','--bubble-other-border':'#a487d9','--bubble-other-title':'#f3eefc','--bubble-other-text':'#3d3548',
+    '--taskbar-bg':'#e4d7f5','--start-deep':'#7455ad',
+    '--ctrl-bg':'#ffffff','--ctrl-text':'#a487d9','--ctrl-border':'transparent',
+    '--avatar-border':'#ffffff','--avatar-glow':'0 0 0 3px #a487d940','--avatar-radius':'0px','--avatar-border-width':'1px',
+  }},
+  mint:{name:'민트 × 화이트', swatch:'#57c295', program:'PC통신', vars:{
+    '--desktop-bg':'#e8f9f1','--chrome-face':'#ffffff','--chrome-title':'#57c295','--chrome-title-text':'#ffffff',
+    '--menu-text':'#3e7d63','--body-bg':'#f3fcf8','--status-text':'#3f9873',
+    '--bubble-me-bg':'#57c295','--bubble-me-title':'#2f9068','--bubble-me-text':'#ffffff',
+    '--bubble-other-bg':'#ffffff','--bubble-other-border':'#57c295','--bubble-other-title':'#eafbf3','--bubble-other-text':'#33453e',
+    '--taskbar-bg':'#cdefdf','--start-deep':'#2f9068',
+    '--ctrl-bg':'#ffffff','--ctrl-text':'#57c295','--ctrl-border':'transparent',
+    '--avatar-border':'#ffffff','--avatar-glow':'0 0 0 3px #57c29540','--avatar-radius':'0px','--avatar-border-width':'1px',
+  }},
+  peach:{name:'피치 × 화이트', swatch:'#f0996a', program:'PC통신', vars:{
+    '--desktop-bg':'#fdece1','--chrome-face':'#ffffff','--chrome-title':'#f0996a','--chrome-title-text':'#ffffff',
+    '--menu-text':'#8a5b3e','--body-bg':'#fff8f2','--status-text':'#c07548',
+    '--bubble-me-bg':'#f0996a','--bubble-me-title':'#c96a3d','--bubble-me-text':'#ffffff',
+    '--bubble-other-bg':'#ffffff','--bubble-other-border':'#f0996a','--bubble-other-title':'#fdefe6','--bubble-other-text':'#4a3a30',
+    '--taskbar-bg':'#f8d9c4','--start-deep':'#c96a3d',
+    '--ctrl-bg':'#ffffff','--ctrl-text':'#f0996a','--ctrl-border':'transparent',
+    '--avatar-border':'#ffffff','--avatar-glow':'0 0 0 3px #f0996a40','--avatar-radius':'0px','--avatar-border-width':'1px',
+  }},
+  gray:{name:'그레이 × 화이트', swatch:'#8b93a1', program:'PC통신', vars:{
+    '--desktop-bg':'#f1f2f4','--chrome-face':'#ffffff','--chrome-title':'#8b93a1','--chrome-title-text':'#ffffff',
+    '--menu-text':'#525a66','--body-bg':'#f8f9fa','--status-text':'#6b7480',
+    '--bubble-me-bg':'#8b93a1','--bubble-me-title':'#5b6472','--bubble-me-text':'#ffffff',
+    '--bubble-other-bg':'#ffffff','--bubble-other-border':'#8b93a1','--bubble-other-title':'#f1f2f4','--bubble-other-text':'#33373d',
+    '--taskbar-bg':'#dde0e5','--start-deep':'#5b6472',
+    '--ctrl-bg':'#ffffff','--ctrl-text':'#8b93a1','--ctrl-border':'transparent',
+    '--avatar-border':'#ffffff','--avatar-glow':'0 0 0 3px #8b93a140','--avatar-radius':'0px','--avatar-border-width':'1px',
+  }},
+  hitel:{name:'하이텔 블루', swatch:'#3f5fe0', program:'HiTEL', vars:{
+    '--desktop-bg':'#000024','--chrome-face':'#0a1a6b','--chrome-title':'#1c3fd1','--chrome-title-text':'#ffffff',
+    '--menu-text':'#cfd8ff','--body-bg':'#00013a','--status-text':'#7ef9ff',
+    '--bubble-me-bg':'#1c3fd1','--bubble-me-title':'#122a99','--bubble-me-text':'#ffffff',
+    '--bubble-other-bg':'#00013a','--bubble-other-border':'#5c7dff','--bubble-other-title':'#0a1a6b','--bubble-other-text':'#cfe0ff',
+    '--taskbar-bg':'#0a1a6b','--start-deep':'#122a99',
+    '--ctrl-bg':'transparent','--ctrl-text':'#7ef9ff','--ctrl-border':'#7ef9ff',
+    '--avatar-border':'#7ef9ff','--avatar-glow':'0 0 8px #7ef9ffaa','--avatar-radius':'0px','--avatar-border-width':'2px',
+  }},
+  naunuri:{name:'나우누리 그린', swatch:'#00ff66', program:'나우누리', vars:{
+    '--desktop-bg':'#000000','--chrome-face':'#001a00','--chrome-title':'#003b00','--chrome-title-text':'#adffb8',
+    '--menu-text':'#00cc55','--body-bg':'#000d00','--status-text':'#4dff9c',
+    '--bubble-me-bg':'#003b00','--bubble-me-title':'#00641c','--bubble-me-text':'#c6ffd2',
+    '--bubble-other-bg':'#001400','--bubble-other-border':'#00ff66','--bubble-other-title':'#002200','--bubble-other-text':'#8cffa0',
+    '--taskbar-bg':'#001a00','--start-deep':'#004d1a',
+    '--ctrl-bg':'transparent','--ctrl-text':'#00ff66','--ctrl-border':'#00ff66',
+    '--avatar-border':'#00ff66','--avatar-glow':'0 0 8px #00ff6699','--avatar-radius':'0px','--avatar-border-width':'2px',
+  }},
+  naunuripink:{name:'나우누리 핑크', swatch:'#ff5fa2', program:'나우누리', vars:{
+    '--desktop-bg':'#000000','--chrome-face':'#1a0011','--chrome-title':'#3d0022','--chrome-title-text':'#ffc6e6',
+    '--menu-text':'#ff7fc0','--body-bg':'#0d0007','--status-text':'#ff8fc8',
+    '--bubble-me-bg':'#3d0022','--bubble-me-title':'#640038','--bubble-me-text':'#ffd6ec',
+    '--bubble-other-bg':'#140009','--bubble-other-border':'#ff5fa2','--bubble-other-title':'#220012','--bubble-other-text':'#ff9fcf',
+    '--taskbar-bg':'#1a0011','--start-deep':'#4d0029',
+    '--ctrl-bg':'transparent','--ctrl-text':'#ff5fa2','--ctrl-border':'#ff5fa2',
+    '--avatar-border':'#ff5fa2','--avatar-glow':'0 0 8px #ff5fa2aa','--avatar-radius':'0px','--avatar-border-width':'2px',
+  }},
+  chollian:{name:'천리안 앰버', swatch:'#ffb000', program:'천리안', vars:{
+    '--desktop-bg':'#000000','--chrome-face':'#1a0f00','--chrome-title':'#5c3600','--chrome-title-text':'#ffdca8',
+    '--menu-text':'#ffb347','--body-bg':'#0d0800','--status-text':'#ffc247',
+    '--bubble-me-bg':'#3d2400','--bubble-me-title':'#805200','--bubble-me-text':'#ffdca8',
+    '--bubble-other-bg':'#140d00','--bubble-other-border':'#ffb000','--bubble-other-title':'#241500','--bubble-other-text':'#ffcf80',
+    '--taskbar-bg':'#1a0f00','--start-deep':'#5c3600',
+    '--ctrl-bg':'transparent','--ctrl-text':'#ffb000','--ctrl-border':'#ffb000',
+    '--avatar-border':'#ffb000','--avatar-glow':'0 0 8px #ffb00099','--avatar-radius':'0px','--avatar-border-width':'2px',
+  }},
+  dosedit:{name:'도스 에디터', swatch:'#0000aa', program:'PC통신', vars:{
+    '--desktop-bg':'#008080','--chrome-face':'#0000aa','--chrome-title':'#000055','--chrome-title-text':'#ffffff',
+    '--menu-text':'#ffffff','--body-bg':'#0000aa','--status-text':'#ffff55',
+    '--bubble-me-bg':'#ffffff','--bubble-me-title':'#000055','--bubble-me-text':'#000000',
+    '--bubble-other-bg':'#0000aa','--bubble-other-border':'#ffffff','--bubble-other-title':'#000055','--bubble-other-text':'#ffffff',
+    '--taskbar-bg':'#c0c0c0','--start-deep':'#808080',
+    '--ctrl-bg':'transparent','--ctrl-text':'#ffff55','--ctrl-border':'#ffff55',
+    '--avatar-border':'#ffffff','--avatar-glow':'0 0 8px #55ffffaa','--avatar-radius':'0px','--avatar-border-width':'2px',
+  }},
+  dreamcore:{name:'드림핑크', swatch:'linear-gradient(135deg,#ff9fe0 60%,#9fe3ff 100%)', program:'스타더스트텔', vars:{
+    '--desktop-bg':'linear-gradient(160deg,#ffe6f5 0%,#ffd2ec 60%,#eaf7ff 100%)','--chrome-face':'#ffffff','--chrome-title':'#ff5fc0','--chrome-title-text':'#ffffff',
+    '--menu-text':'#d63384','--body-bg':'#fff6fb','--status-text':'#ff5fbf',
+    '--bubble-me-bg':'#ffffff','--bubble-me-title':'#ffccea','--bubble-me-text':'#786f75',
+    '--bubble-other-bg':'#ffffff','--bubble-other-border':'#9ee4ff','--bubble-other-title':'#eaf7ff','--bubble-other-text':'#375a7a',
+    '--taskbar-bg':'#ffd6ec','--start-deep':'#ff5fc0',
+    '--ctrl-bg':'#ffffff','--ctrl-text':'#ff5fc0','--ctrl-border':'transparent',
+    '--avatar-border':'#ffffff','--avatar-glow':'0 0 5px #ff9fe0cc','--avatar-radius':'0px','--avatar-border-width':'2px',
+  }},
+};
+
+const FONTS = {
+  pretendard:{name:'프리텐다드 (기본)', family:"'Pretendard', sans-serif"},
+  galmuri11:{name:'갈무리 11 (도트)', family:"'Galmuri11', monospace"},
+  galmuri9:{name:'갈무리 9 (도트, 작게)', family:"'Galmuri9', monospace"},
+  galmuri14:{name:'갈무리 14 (도트, 크게)', family:"'Galmuri14', monospace"},
+  dunggeunmo:{name:'Neo둥근모', family:"'NeoDunggeunmo', monospace"},
+  malgun:{name:'맑은 고딕 (시스템)', family:"'Malgun Gothic','맑은 고딕', sans-serif"},
+  gulim:{name:'굴림 (시스템)', family:"'Gulim','굴림', sans-serif"},
+  dotum:{name:'돋움 (시스템)', family:"'Dotum','돋움', sans-serif"},
+  batang:{name:'바탕 (시스템)', family:"'Batang','바탕', serif"},
+  gungsuh:{name:'궁서 (시스템)', family:"'Gungsuh','궁서', serif"},
+  nanumgothic:{name:'나눔고딕 (시스템)', family:"'NanumGothic','나눔고딕', sans-serif"},
+  nanummyeongjo:{name:'나눔명조 (시스템)', family:"'NanumMyeongjo','나눔명조', serif"},
+  nanumsquare:{name:'나눔스퀘어 (시스템)', family:"'NanumSquare','나눔스퀘어', sans-serif"},
+  chosun:{name:'조선일보명조 (시스템)', family:"'조선일보명조','Chosunilbo Myungjo', serif"},
+  bookk:{name:'부크크명조 (시스템)', family:"'부크크명조','Bookk Myungjo', serif"},
+  applegothic:{name:'애플고딕 (시스템, Mac)', family:"'AppleGothic','애플고딕', sans-serif"},
+};
+
+let state = {
+  ratio:'1:1',
+  theme:'blue',
+  fontKey:'galmuri11',
+  fontSize:16,
+  avatarSize:40,
+  bubbleGap:22,
+  logGap:18,
+  showBubbleChrome:true,
+  showTaskbar:true,
+  clockText:'오후 2:35',
+  messages:[
+    {text:'그때 우리가 나눴던 **이야기**들,', avatar:null, side:'right'},
+    {text:'이상하게 아직도 기억나.', avatar:null, side:'left'},
+  ],
+};
+
+const ratioRow = document.getElementById('ratioRow');
+Object.keys(RATIOS).forEach(key=>{
+  const b = document.createElement('div');
+  b.className = 'chip'+(key===state.ratio?' active':'');
+  b.textContent = RATIOS[key].label;
+  b.dataset.key = key;
+  b.onclick = ()=>{ state.ratio = key; applyRatio(); refreshChips(ratioRow, key); };
+  ratioRow.appendChild(b);
+});
+
+const TASKBAR_OPTS = [{key:'on', label:'표시'},{key:'off', label:'숨김'}];
+const taskbarRow = document.getElementById('taskbarRow');
+TASKBAR_OPTS.forEach(opt=>{
+  const b = document.createElement('div');
+  b.className = 'chip'+((opt.key==='on')===state.showTaskbar?' active':'');
+  b.textContent = opt.label;
+  b.dataset.key = opt.key;
+  b.onclick = ()=>{ state.showTaskbar = opt.key==='on'; applyTaskbarVisibility(); refreshChips(taskbarRow, opt.key); };
+  taskbarRow.appendChild(b);
+});
+
+const BUBBLE_CHROME_OPTS = [{key:'on', label:'표시'},{key:'off', label:'숨김'}];
+const bubbleChromeRow = document.getElementById('bubbleChromeRow');
+BUBBLE_CHROME_OPTS.forEach(opt=>{
+  const b = document.createElement('div');
+  b.className = 'chip'+((opt.key==='on')===state.showBubbleChrome?' active':'');
+  b.textContent = opt.label;
+  b.dataset.key = opt.key;
+  b.onclick = ()=>{ state.showBubbleChrome = opt.key==='on'; applyBubbleChrome(); refreshChips(bubbleChromeRow, opt.key); };
+  bubbleChromeRow.appendChild(b);
+});
+
+const themeGrid = document.getElementById('themeGrid');
+Object.keys(THEMES).forEach(key=>{
+  const b = document.createElement('div');
+  b.className = 'theme-chip'+(key===state.theme?' active':'');
+  b.dataset.key = key;
+  b.innerHTML = `<span class="swatch" style="background:${THEMES[key].swatch}"></span>${THEMES[key].name}`;
+  b.onclick = ()=>{ state.theme = key; applyTheme(); refreshChips(themeGrid, key); };
+  themeGrid.appendChild(b);
+});
+
+const fontSelect = document.getElementById('fontSelect');
+Object.keys(FONTS).forEach(key=>{
+  const o = document.createElement('option');
+  o.value = key; o.textContent = FONTS[key].name;
+  fontSelect.appendChild(o);
+});
+fontSelect.value = state.fontKey;
+fontSelect.onchange = ()=>{
+  state.fontKey = fontSelect.value;
+  applyFont();
+};
+
+const fontSizeRange = document.getElementById('fontSizeRange');
+fontSizeRange.oninput = ()=>{
+  state.fontSize = parseInt(fontSizeRange.value,10);
+  document.getElementById('fontSizeVal').textContent = state.fontSize+'px';
+  applyFont();
+};
+
+const avatarSizeRange = document.getElementById('avatarSizeRange');
+avatarSizeRange.oninput = ()=>{
+  state.avatarSize = parseInt(avatarSizeRange.value,10);
+  document.getElementById('avatarSizeVal').textContent = state.avatarSize+'px';
+  applyAvatarSize();
+};
+
+const bubbleGapRange = document.getElementById('bubbleGapRange');
+bubbleGapRange.oninput = ()=>{
+  state.bubbleGap = parseInt(bubbleGapRange.value,10);
+  document.getElementById('bubbleGapVal').textContent = state.bubbleGap+'px';
+  applyBubbleGap();
+};
+
+const logGapRange = document.getElementById('logGapRange');
+logGapRange.oninput = ()=>{
+  state.logGap = parseInt(logGapRange.value,10);
+  document.getElementById('logGapVal').textContent = state.logGap+'px';
+  applyLogGap();
+};
+
+document.getElementById('filenameInput').oninput = updateTitleText;
+document.getElementById('windowLabelInput').oninput = updateTitleText;
+
+const CLOCK_PATTERNS = [
+  /^(오전|오후)\s?\d{1,2}:\d{2}$/,      // 오전 10:00
+  /^\d{1,2}:\d{2}\s?(am|pm)$/i,          // 10:00 AM
+  /^\d{1,2}:\d{2}$/,                      // 23:10
+];
+function isValidClockText(v){
+  const t = v.trim();
+  return t.length>0 && CLOCK_PATTERNS.some(re=>re.test(t));
+}
+
+document.getElementById('clockInput').oninput = (e)=>{
+  state.clockText = e.target.value;
+  syncClockDisplay();
+};
+
+document.getElementById('addMsgBtn').onclick = ()=>{
+  const lastSide = state.messages.length ? state.messages[state.messages.length-1].side : 'left';
+  const nextSide = lastSide==='right' ? 'left' : 'right';
+  state.messages.push({text:'', avatar:null, side:nextSide});
+  renderMsgEditors();
+  renderMessages();
+};
+
+document.getElementById('downloadBtn').onclick = downloadPNG;
+
+function refreshChips(container, activeKey){
+  [...container.children].forEach(c=> c.classList.toggle('active', c.dataset.key===activeKey));
+}
+
+function applyRatio(){
+  const r = RATIOS[state.ratio];
+  const root = document.getElementById('exportRoot');
+  root.style.width = r.w+'px';
+  root.style.minHeight = r.h+'px';
+  root.style.height = 'auto';
+}
+
+function applyAvatarSize(){
+  document.getElementById('exportRoot').style.setProperty('--avatar-size', state.avatarSize+'px');
+}
+
+function applyBubbleGap(){
+  document.getElementById('messagesContainer').style.gap = state.bubbleGap+'px';
+}
+
+function applyLogGap(){
+  document.getElementById('exportRoot').style.setProperty('--log-gap', state.logGap+'px');
+}
+
+function applyTaskbarVisibility(){
+  document.getElementById('taskbarEl').style.display = state.showTaskbar ? 'flex' : 'none';
+}
+
+function applyBubbleChrome(){
+  document.getElementById('exportRoot').classList.toggle('no-bubble-chrome', !state.showBubbleChrome);
+}
+
+function syncClockDisplay(){
+  document.getElementById('taskbarClock').textContent = state.clockText;
+}
+
+function applyTheme(){
+  const root = document.getElementById('exportRoot');
+  const vars = THEMES[state.theme].vars;
+  Object.keys(vars).forEach(k=> root.style.setProperty(k, vars[k]));
+  root.classList.toggle('theme-glitch', state.theme === 'dreamcore');
+  updateTitleText();
+}
+
+function updateTitleText(){
+  const filename = (document.getElementById('filenameInput').value || '').trim() || '제목없음';
+  const customLabel = (document.getElementById('windowLabelInput').value || '').trim();
+  const label = customLabel;
+  document.getElementById('titleText').textContent = label ? `${filename}.log - ${label}` : `${filename}.log`;
+}
+
+function applyFont(){
+  const family = FONTS[state.fontKey].family;
+  document.getElementById('messagesContainer').style.fontFamily = family;
+  document.getElementById('messagesContainer').style.fontSize = state.fontSize+'px';
+}
+
+function escapeHTML(str){
+  return (str||'').replace(/[&<>"']/g, s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+}
+
+// 문장 전체가 아니라 원하는 부분만 **굵게** / *기울임* 처리할 수 있도록 지원
+function parseInlineFormatting(str){
+  let out = escapeHTML(str);
+  out = out.replace(/\*\*\*([^*]+?)\*\*\*/g, '<b><i>$1</i></b>');
+  out = out.replace(/\*\*([^*]+?)\*\*/g, '<b>$1</b>');
+  out = out.replace(/\*([^*]+?)\*/g, '<i>$1</i>');
+  return out;
+}
+
+function renderMessages(){
+  const container = document.getElementById('messagesContainer');
+  container.innerHTML = state.messages.map((m)=>{
+    const side = m.side==='left' ? 'left' : 'right';
+    const avatarTag = m.avatar ? `<img class="avatar" src="${m.avatar}">` : '';
+    const bubble = `
+      <div class="msg-window">
+        <div class="msg-titlebar"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl">×</span></div>
+        <div class="msg-body">${parseInlineFormatting(m.text)}</div>
+      </div>`;
+    const inner = side==='left' ? (avatarTag+bubble) : (bubble+avatarTag);
+    return `<div class="msg-row ${side}">${inner}</div>`;
+  }).join('');
+  document.getElementById('logCount').textContent = `▌ ${state.messages.length}건의 대화가 저장되었습니다`;
+  document.getElementById('lineStatus').textContent = `줄 ${state.messages.length*2}, 열 1　100%`;
+  applyFont();
+}
+
+function renderMsgEditors(){
+  const wrap = document.getElementById('msgEditors');
+  wrap.innerHTML = '';
+  state.messages.forEach((m,i)=>{
+    const sideLabel = m.side==='left' ? '왼쪽' : '오른쪽';
+    const div = document.createElement('div');
+    div.className = 'msg-editor';
+    div.innerHTML = `
+      <div class="tag"><span>말풍선 ${i+1} · ${sideLabel}</span><button data-i="${i}" class="rm">삭제</button></div>
+      <div class="side-row">
+        <div class="mini-toggle wide ${m.side==='left'?'active':''}" data-i="${i}" data-side="left">◀ 왼쪽</div>
+        <div class="mini-toggle wide ${m.side!=='left'?'active':''}" data-i="${i}" data-side="right">오른쪽 ▶</div>
+      </div>
+      <div class="mini-toggles">
+        <div class="mini-toggle b" data-i="${i}" data-k="bold" title="선택한 부분만 굵게">B</div>
+        <div class="mini-toggle i" data-i="${i}" data-k="italic" title="선택한 부분만 기울임">I</div>
+      </div>
+      <textarea class="text" data-i="${i}" placeholder="메시지 내용">${m.text}</textarea>
+      <div class="avatar-row">
+        ${m.avatar ? `<img class="avatar-preview" src="${m.avatar}">` : ''}
+        <label class="file-btn">${m.avatar ? '이미지 변경' : '+ 프로필 이미지 (1:1)'}<input type="file" accept="image/*" data-i="${i}" class="avatarInput"></label>
+        ${m.avatar ? `<button class="rm-avatar" data-i="${i}">삭제</button>` : ''}
+      </div>
+    `;
+    wrap.appendChild(div);
+  });
+  wrap.querySelectorAll('.text').forEach(el=>{
+    el.oninput = (e)=>{ state.messages[+e.target.dataset.i].text = e.target.value; renderMessages(); };
+  });
+  wrap.querySelectorAll('.side-row .mini-toggle').forEach(el=>{
+    el.onclick = (e)=>{
+      const i = +e.currentTarget.dataset.i, s = e.currentTarget.dataset.side;
+      state.messages[i].side = s;
+      renderMsgEditors(); renderMessages();
+    };
+  });
+  wrap.querySelectorAll('.mini-toggles .mini-toggle').forEach(el=>{
+    el.onclick = (e)=>{
+      const i = +e.currentTarget.dataset.i, k = e.currentTarget.dataset.k;
+      const textarea = wrap.querySelector(`textarea.text[data-i="${i}"]`);
+      const marker = k==='bold' ? '**' : '*';
+      const start = textarea.selectionStart, end = textarea.selectionEnd;
+      const value = textarea.value;
+      const hasSelection = end > start;
+      const selected = hasSelection ? value.slice(start,end) : '내용';
+      const newValue = value.slice(0,start) + marker + selected + marker + value.slice(end);
+      textarea.value = newValue;
+      state.messages[i].text = newValue;
+      const caretStart = start + marker.length;
+      textarea.focus();
+      textarea.setSelectionRange(caretStart, caretStart + selected.length);
+      renderMessages();
+    };
+  });
+  wrap.querySelectorAll('.rm').forEach(el=>{
+    el.onclick = (e)=>{
+      if(state.messages.length<=1) return;
+      state.messages.splice(+e.target.dataset.i,1);
+      renderMsgEditors(); renderMessages();
+    };
+  });
+  wrap.querySelectorAll('.avatarInput').forEach(el=>{
+    el.onchange = (e)=>{
+      const i = +e.target.dataset.i;
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev)=>{
+        state.messages[i].avatar = ev.target.result;
+        renderMsgEditors(); renderMessages();
+      };
+      reader.readAsDataURL(file);
+    };
+  });
+  wrap.querySelectorAll('.rm-avatar').forEach(el=>{
+    el.onclick = (e)=>{
+      const i = +e.target.dataset.i;
+      state.messages[i].avatar = null;
+      renderMsgEditors(); renderMessages();
+    };
+  });
+}
+
+function downloadPNG(){
+  const btn = document.getElementById('downloadBtn');
+  btn.disabled = true;
+  btn.textContent = '이미지 생성 중...';
+  const target = document.getElementById('exportRoot');
+  const filename = (document.getElementById('filenameInput').value.trim() || 'PC통신_채팅로그_백업') + '.png';
+
+  document.fonts.ready.then(()=>{
+    return html2canvas(target, {scale:2, backgroundColor:null, useCORS:true, logging:false});
+  }).then(canvas=>{
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }).catch(err=>{
+    console.error(err);
+    alert('이미지 생성 중 문제가 발생했어요. 잠시 후 다시 시도해주세요.');
+  }).finally(()=>{
+    btn.disabled = false;
+    btn.textContent = 'PNG로 다운로드';
+  });
+}
+
+applyRatio();
+applyTheme();
+applyAvatarSize();
+applyBubbleGap();
+applyLogGap();
+applyBubbleChrome();
+applyTaskbarVisibility();
+syncClockDisplay();
+renderMsgEditors();
+renderMessages();
+</script>
+</body>
+</html>
