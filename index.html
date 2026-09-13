@@ -9,6 +9,28 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
 @import url('https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css');
 @import url('//cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@1.601/neodgm/style.css');
+
+/* 리디바탕 / 조선일보명조 / 부크크명조 - 시스템 설치 여부와 무관하게 항상 동일하게 보이도록 외부 웹폰트로 로드 */
+@font-face{
+  font-family:'RIDIBatang';
+  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff') format('woff');
+  font-weight:normal; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:'ChosunIlboMyungjo';
+  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Chosunilbo_myungjo.woff') format('woff');
+  font-weight:normal; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:'BookkMyungjo';
+  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/BookkMyungjo-Lt.woff2') format('woff2');
+  font-weight:400; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:'BookkMyungjo';
+  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/BookkMyungjo-Bd.woff2') format('woff2');
+  font-weight:700; font-style:normal; font-display:swap;
+}
 </style>
 
 <style>
@@ -42,7 +64,9 @@ body{
 .app{max-width:1336px;margin:0 auto;display:grid;grid-template-columns:340px 1fr;gap:22px;align-items:start;}
 @media (max-width:880px){.app{grid-template-columns:1fr;}}
 
-.panel{background:var(--ui-panel);border:1px solid var(--ui-line);padding:18px;}
+.panel{background:var(--ui-panel);border:1px solid var(--ui-line);padding:18px;
+  position:sticky;top:20px;height:calc(100vh - 40px);overflow-y:auto;}
+@media (max-width:880px){.panel{position:static;height:auto;overflow-y:visible;}}
 .section{margin-bottom:20px;}
 .section:last-child{margin-bottom:0;}
 .section-title{font-family:'NeoDunggeunmo', monospace;font-size:13px;color:var(--ui-accent);margin:0 0 10px;display:flex;align-items:center;gap:6px;}
@@ -93,12 +117,18 @@ input[type="range"]{width:100%;accent-color:var(--ui-accent);}
 }
 .avatar-row label.file-btn:hover{color:#eef2f8;border-color:var(--ui-accent);}
 .avatar-row input[type=file]{display:none;}
-.avatar-preview{width:28px;height:28px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--ui-line-lt);}
+.avatar-preview{border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--ui-line-lt);}
 .avatar-row .rm-avatar{background:none;border:none;color:#7b8aa0;cursor:pointer;font-size:12px;}
 
 .add-btn{width:100%;padding:9px 0;background:none;border:1px dashed var(--ui-line-lt);
   color:var(--ui-text-dim);cursor:pointer;font-size:12.5px;font-family:'Pretendard',sans-serif;}
 .add-btn:hover{color:#eef2f8;border-color:var(--ui-accent);}
+
+.insert-bubble-row{display:flex;align-items:center;gap:6px;margin:10px 0;}
+.insert-bubble-row::before, .insert-bubble-row::after{content:'';flex:1;height:1px;background:var(--ui-line);}
+.insert-bubble-btn{flex:0 0 auto;background:none;border:1px dashed var(--ui-line-lt);color:#4d5771;
+  cursor:pointer;font-size:10.5px;font-family:'Pretendard',sans-serif;padding:3px 8px;border-radius:20px;}
+.insert-bubble-btn:hover{color:#eef2f8;border-color:var(--ui-accent);background:#171c27;}
 
 .hint{font-size:10.5px;color:#4d5771;margin-top:8px;line-height:1.5;}
 
@@ -108,7 +138,9 @@ input[type="range"]{width:100%;accent-color:var(--ui-accent);}
 .download-btn:disabled{opacity:.6;cursor:default;}
 
 .preview-wrap{background:var(--ui-panel);border:1px solid var(--ui-line);min-height:520px;
-  display:flex;padding:26px;overflow:auto;}
+  display:flex;padding:26px;overflow:auto;
+  position:sticky;top:20px;height:calc(100vh - 40px);}
+@media (max-width:880px){.preview-wrap{position:static;height:auto;max-height:80vh;}}
 
 #exportRoot{position:relative;flex-shrink:0;background:var(--desktop-bg);display:flex;flex-direction:column;
   font-family:'Pretendard',sans-serif;height:auto;margin:auto;}
@@ -147,7 +179,7 @@ input[type="range"]{width:100%;accent-color:var(--ui-accent);}
 .msg-row.left{justify-content:flex-start;}
 .msg-row.right{justify-content:flex-end;}
 
-.avatar{width:var(--avatar-size,40px);height:var(--avatar-size,40px);aspect-ratio:1/1;object-fit:cover;
+.avatar{object-fit:cover;
   border-radius:var(--avatar-radius,0px);
   flex-shrink:0;border:var(--avatar-border-width,2px) solid var(--avatar-border,var(--chrome-face));
   box-shadow:0 2px 6px rgba(0,0,0,.18), var(--avatar-glow,0 0 0 rgba(0,0,0,0));}
@@ -163,7 +195,7 @@ input[type="range"]{width:100%;accent-color:var(--ui-accent);}
 #exportRoot.no-bubble-chrome .msg-titlebar{display:none;}
 
 
-.msg-body{padding:9px 12px;word-break:break-word;white-space:pre-wrap;line-height:1.6;}
+.msg-body{padding:9px 12px;word-break:break-word;white-space:pre-wrap;line-height:var(--msg-line-height,1.6);}
 .msg-row.left .msg-body{color:var(--bubble-other-text);}
 .msg-row.right .msg-body{color:var(--bubble-me-text);}
 
@@ -253,30 +285,41 @@ input[type="range"]{width:100%;accent-color:var(--ui-accent);}
       <p class="section-title">글꼴</p>
       <select id="fontSelect"></select>
       <label class="small">글자 크기</label>
-      <input type="range" id="fontSizeRange" min="12" max="26" value="16">
-      <div class="range-val" id="fontSizeVal">16px</div>
+      <input type="range" id="fontSizeRange" min="12" max="26" value="15">
+      <div class="range-val" id="fontSizeVal">15px</div>
       <p class="hint">* 시스템 폰트는 해당 폰트가 설치된 컴퓨터에서만 정상적으로 보여요.</p>
     </div>
 
     <div class="section">
       <p class="section-title">프로필 이미지 크기</p>
-      <input type="range" id="avatarSizeRange" min="20" max="72" value="40">
-      <div class="range-val" id="avatarSizeVal">40px</div>
+      <input type="range" id="avatarSizeRange" min="20" max="72" value="60">
+      <div class="range-val" id="avatarSizeVal">60px</div>
     </div>
 
     <div class="section">
       <p class="section-title">대화 내용</p>
       <p class="format-hint">* 텍스트를 선택한 뒤 B / I 버튼을 누르거나 **굵게**, *기울임*으로 꾸밀 수 있어요.</p>
       <label class="small">말풍선 간격</label>
-      <input type="range" id="bubbleGapRange" min="4" max="60" value="22">
-      <div class="range-val" id="bubbleGapVal">22px</div>
+      <input type="range" id="bubbleGapRange" min="4" max="60" value="15">
+      <div class="range-val" id="bubbleGapVal">15px</div>
+      <label class="small">줄바꿈 간격 (텍스트 줄 간격)</label>
+      <input type="range" id="lineHeightRange" min="1" max="2.5" step="0.1" value="1.6">
+      <div class="range-val" id="lineHeightVal">1.6</div>
       <label class="small">로그 문구 간격 (위·아래 동시)</label>
-      <input type="range" id="logGapRange" min="0" max="60" value="18">
-      <div class="range-val" id="logGapVal">18px</div>
+      <input type="range" id="logGapRange" min="0" max="60" value="30">
+      <div class="range-val" id="logGapVal">30px</div>
       <label class="small">말풍선 표시 (미니 창 모양 여부)</label>
       <div class="btn-row" id="bubbleChromeRow"></div>
       <div id="msgEditors"></div>
       <button class="add-btn" id="addMsgBtn">+ 말풍선 추가</button>
+    </div>
+
+    <div class="section">
+      <p class="section-title">로그 문구</p>
+      <label class="small">상단 문구</label>
+      <input type="text" id="topStatusInput" value="◆ [SYSTEM] 통신 접속 완료 · 반갑습니다">
+      <label class="small">하단 문구 ( {count} → 대화 개수로 자동 치환 )</label>
+      <input type="text" id="bottomStatusInput" value="▌ {count}건의 대화가 저장되었습니다">
     </div>
 
     <div class="section">
@@ -311,7 +354,7 @@ input[type="range"]{width:100%;accent-color:var(--ui-accent);}
             <span>접속(C)</span><span>대화(T)</span><span>설정(O)</span><span>보기(V)</span><span>도움말(H)</span>
           </div>
           <div class="log-body">
-            <div class="log-status top">◆ [SYSTEM] 통신 접속 완료 · 반갑습니다<span class="cursor"></span></div>
+            <div class="log-status top"><span id="topStatusText">◆ [SYSTEM] 통신 접속 완료 · 반갑습니다</span><span class="cursor"></span></div>
             <div class="messages-container" id="messagesContainer"></div>
             <div class="log-status bottom" id="logCount">▌ 0건의 대화가 저장되었습니다</div>
           </div>
@@ -365,6 +408,7 @@ const RATIOS = {
   '1:1': {w:900, h:900, label:'1:1'},
   '4:5': {w:900, h:1125, label:'4:5'},
   '9:16':{w:720, h:1280, label:'9:16'},
+  'auto':{w:900, h:null, label:'자동'},
 };
 
 const THEMES = {
@@ -476,6 +520,24 @@ const THEMES = {
     '--ctrl-bg':'#ffffff','--ctrl-text':'#ff5fc0','--ctrl-border':'transparent',
     '--avatar-border':'#ffffff','--avatar-glow':'0 0 5px #ff9fe0cc','--avatar-radius':'0px','--avatar-border-width':'2px',
   }},
+  detective:{name:'베이지', swatch:'#8a6a41', program:'미결사건', vars:{
+    '--desktop-bg':'linear-gradient(160deg,#2b2118 0%,#1c1610 100%)','--chrome-face':'#e9dcbd','--chrome-title':'#4a3620','--chrome-title-text':'#f2e8cf',
+    '--menu-text':'#5c4a30','--body-bg':'#f3ead2','--status-text':'#7a5c3e',
+    '--bubble-me-bg':'#4a3620','--bubble-me-title':'#31220f','--bubble-me-text':'#f2e8cf',
+    '--bubble-other-bg':'#f8f1dc','--bubble-other-border':'#8a6a41','--bubble-other-title':'#e9dcbd','--bubble-other-text':'#3a2f1d',
+    '--taskbar-bg':'#d8c8a0','--start-deep':'#31220f',
+    '--ctrl-bg':'#f2e8cf','--ctrl-text':'#4a3620','--ctrl-border':'transparent',
+    '--avatar-border':'#f2e8cf','--avatar-glow':'0 0 0 3px #8a6a4140','--avatar-radius':'0px','--avatar-border-width':'1px',
+  }},
+  cosmos:{name:'코스모스', swatch:'linear-gradient(135deg,#8b5cf6 40%,#22d3ee 100%)', program:'스텔라넷', vars:{
+    '--desktop-bg':'radial-gradient(ellipse at 30% 15%, #2c1a63 0%, #0e0a24 55%, #05040f 100%)','--chrome-face':'#161230','--chrome-title':'#3d2b7a','--chrome-title-text':'#e6dcff',
+    '--menu-text':'#a89adf','--body-bg':'#0d0b22','--status-text':'#8b5cf6',
+    '--bubble-me-bg':'#3d2b7a','--bubble-me-title':'#291c57','--bubble-me-text':'#ece5ff',
+    '--bubble-other-bg':'#141230','--bubble-other-border':'#22d3ee','--bubble-other-title':'#1c1846','--bubble-other-text':'#c6f2ff',
+    '--taskbar-bg':'#181433','--start-deep':'#291c57',
+    '--ctrl-bg':'transparent','--ctrl-text':'#22d3ee','--ctrl-border':'#22d3ee',
+    '--avatar-border':'#22d3ee','--avatar-glow':'0 0 8px #8b5cf6aa','--avatar-radius':'0px','--avatar-border-width':'2px',
+  }},
 };
 
 const FONTS = {
@@ -484,6 +546,9 @@ const FONTS = {
   galmuri9:{name:'갈무리 9 (도트, 작게)', family:"'Galmuri9', monospace"},
   galmuri14:{name:'갈무리 14 (도트, 크게)', family:"'Galmuri14', monospace"},
   dunggeunmo:{name:'Neo둥근모', family:"'NeoDunggeunmo', monospace"},
+  ridibatang:{name:'리디바탕', family:"'RIDIBatang', serif"},
+  chosun:{name:'조선일보명조', family:"'ChosunIlboMyungjo', serif"},
+  bookk:{name:'부크크명조', family:"'BookkMyungjo', serif"},
   malgun:{name:'맑은 고딕 (시스템)', family:"'Malgun Gothic','맑은 고딕', sans-serif"},
   gulim:{name:'굴림 (시스템)', family:"'Gulim','굴림', sans-serif"},
   dotum:{name:'돋움 (시스템)', family:"'Dotum','돋움', sans-serif"},
@@ -492,8 +557,6 @@ const FONTS = {
   nanumgothic:{name:'나눔고딕 (시스템)', family:"'NanumGothic','나눔고딕', sans-serif"},
   nanummyeongjo:{name:'나눔명조 (시스템)', family:"'NanumMyeongjo','나눔명조', serif"},
   nanumsquare:{name:'나눔스퀘어 (시스템)', family:"'NanumSquare','나눔스퀘어', sans-serif"},
-  chosun:{name:'조선일보명조 (시스템)', family:"'조선일보명조','Chosunilbo Myungjo', serif"},
-  bookk:{name:'부크크명조 (시스템)', family:"'부크크명조','Bookk Myungjo', serif"},
   applegothic:{name:'애플고딕 (시스템, Mac)', family:"'AppleGothic','애플고딕', sans-serif"},
 };
 
@@ -501,16 +564,19 @@ let state = {
   ratio:'1:1',
   theme:'blue',
   fontKey:'galmuri11',
-  fontSize:16,
-  avatarSize:40,
-  bubbleGap:22,
-  logGap:18,
+  fontSize:15,
+  avatarSize:60,
+  bubbleGap:15,
+  lineHeight:1.6,
+  logGap:30,
   showBubbleChrome:true,
   showTaskbar:true,
   clockText:'오후 2:35',
+  topStatusText:'◆ [SYSTEM] 통신 접속 완료 · 반갑습니다',
+  bottomStatusTemplate:'▌ {count}건의 대화가 저장되었습니다',
   messages:[
-    {text:'그때 우리가 나눴던 **이야기**들,', avatar:null, side:'right'},
-    {text:'이상하게 아직도 기억나.', avatar:null, side:'left'},
+    {text:'그때 우리가 나눴던 **이야기**들,', avatar:null, avatarRatio:1, side:'right'},
+    {text:'이상하게 아직도 기억나.', avatar:null, avatarRatio:1, side:'left'},
   ],
 };
 
@@ -589,6 +655,13 @@ bubbleGapRange.oninput = ()=>{
   applyBubbleGap();
 };
 
+const lineHeightRange = document.getElementById('lineHeightRange');
+lineHeightRange.oninput = ()=>{
+  state.lineHeight = parseFloat(lineHeightRange.value);
+  document.getElementById('lineHeightVal').textContent = state.lineHeight.toFixed(1);
+  applyLineHeight();
+};
+
 const logGapRange = document.getElementById('logGapRange');
 logGapRange.oninput = ()=>{
   state.logGap = parseInt(logGapRange.value,10);
@@ -617,8 +690,17 @@ document.getElementById('clockInput').oninput = (e)=>{
 document.getElementById('addMsgBtn').onclick = ()=>{
   const lastSide = state.messages.length ? state.messages[state.messages.length-1].side : 'left';
   const nextSide = lastSide==='right' ? 'left' : 'right';
-  state.messages.push({text:'', avatar:null, side:nextSide});
+  state.messages.push({text:'', avatar:null, avatarRatio:1, side:nextSide});
   renderMsgEditors();
+  renderMessages();
+};
+
+document.getElementById('topStatusInput').oninput = (e)=>{
+  state.topStatusText = e.target.value;
+  renderMessages();
+};
+document.getElementById('bottomStatusInput').oninput = (e)=>{
+  state.bottomStatusTemplate = e.target.value;
   renderMessages();
 };
 
@@ -632,16 +714,34 @@ function applyRatio(){
   const r = RATIOS[state.ratio];
   const root = document.getElementById('exportRoot');
   root.style.width = r.w+'px';
-  root.style.minHeight = r.h+'px';
+  if(r.h){
+    root.style.minHeight = r.h+'px';
+  }else{
+    root.style.minHeight = '';
+  }
   root.style.height = 'auto';
 }
 
+// 프로필 이미지 원본 비율(avatarRatio)을 유지하면서, avatarSize를 "긴 변" 기준으로 삼아
+// 가로/세로 크기를 계산한다. 정사각형이 아닌 이미지를 억지로 늘리지 않기 위함.
+function avatarBoxStyle(ratio, maxSize){
+  const r = (ratio && ratio > 0) ? ratio : 1;
+  let w, h;
+  if(r >= 1){ w = maxSize; h = maxSize / r; }
+  else { h = maxSize; w = maxSize * r; }
+  return `width:${w.toFixed(2)}px;height:${h.toFixed(2)}px;`;
+}
+
 function applyAvatarSize(){
-  document.getElementById('exportRoot').style.setProperty('--avatar-size', state.avatarSize+'px');
+  renderMessages();
 }
 
 function applyBubbleGap(){
   document.getElementById('messagesContainer').style.gap = state.bubbleGap+'px';
+}
+
+function applyLineHeight(){
+  document.getElementById('exportRoot').style.setProperty('--msg-line-height', state.lineHeight);
 }
 
 function applyLogGap(){
@@ -698,7 +798,9 @@ function renderMessages(){
   const container = document.getElementById('messagesContainer');
   container.innerHTML = state.messages.map((m)=>{
     const side = m.side==='left' ? 'left' : 'right';
-    const avatarTag = m.avatar ? `<img class="avatar" src="${m.avatar}">` : '';
+    const avatarTag = m.avatar
+      ? `<img class="avatar" style="${avatarBoxStyle(m.avatarRatio, state.avatarSize)}" src="${m.avatar}">`
+      : '';
     const bubble = `
       <div class="msg-window">
         <div class="msg-titlebar"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl">×</span></div>
@@ -707,14 +809,36 @@ function renderMessages(){
     const inner = side==='left' ? (avatarTag+bubble) : (bubble+avatarTag);
     return `<div class="msg-row ${side}">${inner}</div>`;
   }).join('');
-  document.getElementById('logCount').textContent = `▌ ${state.messages.length}건의 대화가 저장되었습니다`;
+  document.getElementById('topStatusText').textContent = state.topStatusText;
+  document.getElementById('logCount').textContent =
+    (state.bottomStatusTemplate || '').replace(/\{count\}/g, state.messages.length);
   document.getElementById('lineStatus').textContent = `줄 ${state.messages.length*2}, 열 1　100%`;
   applyFont();
+}
+
+function makeInsertBubbleRow(idx){
+  const row = document.createElement('div');
+  row.className = 'insert-bubble-row';
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'insert-bubble-btn';
+  btn.textContent = '+ 여기에 삽입';
+  btn.onclick = ()=>{
+    const around = state.messages[idx-1] || state.messages[idx];
+    const baseSide = around ? around.side : 'left';
+    const newSide = baseSide==='right' ? 'left' : 'right';
+    state.messages.splice(idx, 0, {text:'', avatar:null, avatarRatio:1, side:newSide});
+    renderMsgEditors();
+    renderMessages();
+  };
+  row.appendChild(btn);
+  return row;
 }
 
 function renderMsgEditors(){
   const wrap = document.getElementById('msgEditors');
   wrap.innerHTML = '';
+  wrap.appendChild(makeInsertBubbleRow(0));
   state.messages.forEach((m,i)=>{
     const sideLabel = m.side==='left' ? '왼쪽' : '오른쪽';
     const div = document.createElement('div');
@@ -731,12 +855,13 @@ function renderMsgEditors(){
       </div>
       <textarea class="text" data-i="${i}" placeholder="메시지 내용">${m.text}</textarea>
       <div class="avatar-row">
-        ${m.avatar ? `<img class="avatar-preview" src="${m.avatar}">` : ''}
-        <label class="file-btn">${m.avatar ? '이미지 변경' : '+ 프로필 이미지 (1:1)'}<input type="file" accept="image/*" data-i="${i}" class="avatarInput"></label>
+        ${m.avatar ? `<img class="avatar-preview" style="${avatarBoxStyle(m.avatarRatio, 28)}" src="${m.avatar}">` : ''}
+        <label class="file-btn">${m.avatar ? '이미지 변경' : '+ 프로필 이미지'}<input type="file" accept="image/*" data-i="${i}" class="avatarInput"></label>
         ${m.avatar ? `<button class="rm-avatar" data-i="${i}">삭제</button>` : ''}
       </div>
     `;
     wrap.appendChild(div);
+    wrap.appendChild(makeInsertBubbleRow(i+1));
   });
   wrap.querySelectorAll('.text').forEach(el=>{
     el.oninput = (e)=>{ state.messages[+e.target.dataset.i].text = e.target.value; renderMessages(); };
@@ -780,8 +905,19 @@ function renderMsgEditors(){
       if(!file) return;
       const reader = new FileReader();
       reader.onload = (ev)=>{
-        state.messages[i].avatar = ev.target.result;
-        renderMsgEditors(); renderMessages();
+        const dataUrl = ev.target.result;
+        const probe = new Image();
+        probe.onload = ()=>{
+          state.messages[i].avatar = dataUrl;
+          state.messages[i].avatarRatio = probe.naturalWidth / probe.naturalHeight || 1;
+          renderMsgEditors(); renderMessages();
+        };
+        probe.onerror = ()=>{
+          state.messages[i].avatar = dataUrl;
+          state.messages[i].avatarRatio = 1;
+          renderMsgEditors(); renderMessages();
+        };
+        probe.src = dataUrl;
       };
       reader.readAsDataURL(file);
     };
@@ -822,6 +958,7 @@ applyRatio();
 applyTheme();
 applyAvatarSize();
 applyBubbleGap();
+applyLineHeight();
 applyLogGap();
 applyBubbleChrome();
 applyTaskbarVisibility();
